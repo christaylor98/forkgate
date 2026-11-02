@@ -1,0 +1,36 @@
+forkgate sim  seed=20261102  N=10000  calib_wrong=2061  hold=3.0d
+populations: correct_confident=3983, wrong_uncertain=3043, wrong_confident=953, correct_uncertain=2021
+conformal thresholds (agreement > tau to pass): low=0.600, medium=0.800, high=0.950, armB=0.800
+
+                                            |          Arm A |          Arm B |          Arm C |          Arm D
+---------------------------------------------------------------------------------------------------------------
+wrong claims emitted (EMIT+CONTAIN)         |           3996 |            838 |           1204 |           1204
+  of which CONTAINed                        |              0 |              0 |            593 |            593
+wrong claims caught (UNKNOWN)               |              0 |           3158 |           2792 |           2792
+wrong-confident total                       |            953 |            953 |            953 |            953
+wrong-confident caught (UNKNOWN)            |              0 |            259 |            261 |            261
+wrong-confident CONTAINed                   |              0 |              0 |            288 |            288
+abstention rate                             |           0.0% |          59.5% |          51.8% |          51.8%
+correct claims abstained on                 |              0 |           2789 |           2391 |           2391
+external holds cancelled (wrong claims)     |              0 |              0 |            202 |            202
+contaminated decisions (internal)           |           8459 |           1820 |           2603 |           2603
+contaminated decisions (external, executed) |           3542 |            733 |            875 |            875
+contaminated repaired by fork (internal)    |              0 |              0 |              0 |           2603
+external effects repaired by fork           |              0 |              0 |              0 |              0
+external effects needing compensation       | 3542 (unflagged) | 733 (unflagged) | 875 (unflagged) |            875
+mean time-to-repair (days)                  |            n/a |            n/a |            n/a |           6.50
+
+Out-of-sample conformal check (fresh draw, P(emit | wrong) vs alpha):
+  low    alpha=0.50 tau=0.600 observed=0.434
+  medium alpha=0.25 tau=0.800 observed=0.204
+  high   alpha=0.05 tau=0.950 observed=0.043
+
+Pre-registered predictions:
+  1 (B) wrong-confident caught = 259/953 = 27.2%  (need < 20%)  -> FAILED
+  2 (C) wrong-confident flagged = 549/953 = 57.6% vs B 27.2%  (need >=40% and >=3x B)  -> FAILED
+  3 (D) internal repaired 2603/2603, external repaired 0, compensation_required 875 vs executed external 875  -> PASS
+  4 (D) compensation 875 vs A 3542 = 0.25x (need < 0.60)  -> PASS
+  5 conformal out-of-sample pass-through <= alpha+0.02 at every tier  -> PASS
+
+ACH overrides (arms C/D): 0   main-chain verified: True
+branch digests  main(D)=afb5832db25b10ae  fix(D)=a3fe1ba0cf53bb26

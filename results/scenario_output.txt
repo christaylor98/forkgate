@@ -1,0 +1,44 @@
+
+=== 1. the claim and the gate =========================================
+claim     : "Regulation threshold for storing compound X is 50 units"
+stakes    : medium (clear and convincing), alpha=0.25
+agreement : 0.95 vs conformal tau=0.80  -> passes (confident)
+citations : 3 listed, 1 distinct origin
+admiralty : reliability B / credibility 4  (medium needs C / <= 3)
+ACH       : least-refuted hypothesis = '50 units'
+OUTCOME   : CONTAIN   reasons=('admiralty B4 below C3',)
+
+=== 2. timestream on main (CONTAIN: externals held, then released after the hold window) 
+  day  0.0  4ac6e57a  [internal]  unrelated earlier event
+  day  1.0  401531ba  [internal]  claim
+  day  1.1  c6e6e786  [internal]  update compliance checklist (limit=50)
+  day  1.2  f8e605f2  [internal]  set storage cap in capacity plan (50)
+  day  1.3  9e63ff1b  [internal]  HELD: email supplier 'limit is 50'
+  day  2.0  a6b7a659  [internal]  unrelated later event
+  day  3.0  82398313  [EXTERNAL]  EMAIL SENT to supplier: 'limit is 50'
+  hash chain verified: True
+
+=== 3. day 4: delayed oracle refutes the claim (true limit: 5 units) ==
+  claim-1 REFUTED. The email left the system on day 3. Fork at the claim.
+
+=== 4. fork at claim-1, replay downstream with the claim retracted ====
+  fix branch starts at 4ac6e57a (prefix EXCLUDES the bad event)
+  replay -> fix: 1 unchanged, 4 repaired (internal), 1 compensation_required (external)
+
+=== 5. diff main vs fix ===============================================
+  (retracted) claim-1  [internal] claim
+  REPAIRED   d1       [internal] update compliance checklist (limit=50)
+  REPAIRED   d2       [internal] set storage cap in capacity plan (50)
+  (retracted) h3       [internal] hold
+  COMPENSATE d3       [EXTERNAL] EMAIL SENT to supplier: 'limit is 50'
+             -> external effect already left the system; fork cannot undo it
+  unchanged events carried over: 2
+
+=== result ============================================================
+  decisions repaired by fork : 2  (internal)
+  flagged for compensation   : 1  (external, NOT undone)
+
+       claim --CONTAIN--> [d1 internal] [d2 internal] [d3 EXTERNAL email]
+                               |            |              |
+                fork+replay:  repaired    repaired    compensation_required
+
