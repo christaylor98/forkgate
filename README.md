@@ -1,8 +1,25 @@
 # forkgate
 
-**A minimal model of axFlow-style fork semantics, not axFlow itself.** This repo is a standalone
-Python model written to trial an idea. It does not use axFlow code, and nothing here describes
-axFlow's internals or APIs. (axFlow is Chris Taylor's data-forking timestream system.)
+Bad data often isn't caught when it arrives. An AI output, a bad feed or a wrong correction can
+be discovered days later, after everything downstream has already used it. Most systems can only
+patch forward from there.
+
+**Data forking** takes a different approach: keep the full stream of events over time, and when
+something bad is found, fork the stream at the point just before it arrived. The original history
+stays intact; the fork carries the corrected version forward, and everything downstream is
+replayed on top of it. You decide which branch is the truth *after* you know what went wrong, not
+at the moment the data arrived.
+
+```
+ events:     e1 ── e2 ── e3(bad) ── e4 ── e5         original history, kept
+                    │
+ fork at e2:        └── e3'(fixed) ── e4' ── e5'     corrected branch, downstream replayed
+```
+
+That is the idea behind **axFlow**, Chris Taylor's data-forking timestream system.
+
+This repo is a minimal standalone Python model of that fork idea, written to trial it in public.
+It does not use axFlow code and does not describe axFlow's internals or APIs.
 
 ## Thesis
 
